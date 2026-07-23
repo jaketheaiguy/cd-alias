@@ -69,11 +69,16 @@ This command compiles and packages two formats inside the `dist/` folder:
 # Jump to an alias
 cda work
 
-# List all configured aliases
-cda --list
+# Open alias directory directly in File Explorer
+cda work -o
+cda work --open
 
 # Open the GUI configuration window
-cda --open
+cda --gui
+cda --config
+
+# List all configured aliases
+cda --list
 
 # Display help and alias list
 cda --help

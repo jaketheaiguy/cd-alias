@@ -39,11 +39,11 @@ function showHelp() {
   console.log(`cda - Quick Directory Alias Changer
 
 Usage:
-  cda <alias>         cd into the directory associated with the alias
-  cda --list          list all aliases
-  cda --open          open the configuration GUI
-  cda --config        open the configuration GUI
-  cda --help          show this help message
+  cda <alias>            cd into the directory associated with the alias
+  cda <alias> -o         open directory in File Explorer (--open, -o)
+  cda --gui              open the configuration GUI (--config, -c, -g)
+  cda --list             list all aliases (-l)
+  cda --help             show this help message (-h)
 `);
   showAllAliases();
 }
@@ -139,6 +139,43 @@ function levenshtein(a, b) {
   return matrix[b.length][a.length];
 }
 
+function openAliasInExplorer(aliasInput) {
+  const normalizedInput = aliasInput.trim().toLowerCase();
+  const match = activeList.find(item => item.alias.toLowerCase() === normalizedInput);
+
+  if (match) {
+    const targetPath = match.path;
+    console.log(`Opening ${targetPath} in File Explorer...`);
+    if (isWindows) {
+      child_process.exec(`explorer.exe "${targetPath}"`);
+    } else {
+      // WSL
+      try {
+        const winPath = child_process.execSync(`wslpath -w "${targetPath}" 2>/dev/null`).toString().trim();
+        child_process.exec(`explorer.exe "${winPath}"`);
+      } catch (err) {
+        child_process.exec(`xdg-open "${targetPath}" 2>/dev/null || explorer.exe "${targetPath}"`);
+      }
+    }
+  } else {
+    console.log(`Alias '${aliasInput}' not found.\n`);
+    showAllAliases();
+
+    const scored = activeList
+      .map(item => ({
+        alias: item.alias,
+        dist: levenshtein(normalizedInput, item.alias)
+      }))
+      .filter(item => item.dist <= 3)
+      .sort((a, b) => a.dist - b.dist);
+
+    if (scored.length > 0) {
+      const topMatches = scored.slice(0, 2).map(x => x.alias);
+      console.log(`\nDid you mean: ${topMatches.join(', ')}?`);
+    }
+  }
+}
+
 function handleAlias(aliasInput) {
   const normalizedInput = aliasInput.trim().toLowerCase();
   const match = activeList.find(item => item.alias.toLowerCase() === normalizedInput);
@@ -183,12 +220,28 @@ function handleAlias(aliasInput) {
 
 // Main execution
 const args = process.argv.slice(2);
-if (args.length === 0 || args[0] === '--help' || args[0] === '-h') {
+
+const hasHelpFlag = args.includes('--help') || args.includes('-h');
+const hasListFlag = args.includes('--list') || args.includes('-l');
+const hasGuiFlag = args.includes('--gui') || args.includes('-g') || args.includes('--config') || args.includes('-c');
+const hasOpenFlag = args.includes('--open') || args.includes('-o');
+
+const knownFlags = ['--help', '-h', '--list', '-l', '--gui', '-g', '--config', '-c', '--open', '-o'];
+const positionalArgs = args.filter(arg => !knownFlags.includes(arg));
+
+if (args.length === 0 || (hasHelpFlag && positionalArgs.length === 0)) {
   showHelp();
-} else if (args[0] === '--list') {
+} else if (hasListFlag && positionalArgs.length === 0) {
   showAllAliases();
-} else if (args[0] === '--open' || args[0] === '--config') {
+} else if (hasGuiFlag && positionalArgs.length === 0) {
   openGUI();
+} else if (positionalArgs.length > 0) {
+  const aliasInput = positionalArgs[0];
+  if (hasOpenFlag) {
+    openAliasInExplorer(aliasInput);
+  } else {
+    handleAlias(aliasInput);
+  }
 } else {
-  handleAlias(args[0]);
+  showHelp();
 }
