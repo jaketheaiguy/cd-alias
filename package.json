@@ -1,6 +1,6 @@
 {
   "name": "cd-alias",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Quickly jump to directories using custom aliases in Windows CMD, PowerShell, and WSL",
   "main": "src/main.js",
   "scripts": {
