@@ -1,0 +1,64 @@
+{
+  "name": "cd-alias",
+  "version": "1.0.0",
+  "description": "Quickly jump to directories using custom aliases in Windows CMD, PowerShell, and WSL",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jaketheaiguy/cd-alias.git"
+  },
+  "keywords": [
+    "cd",
+    "alias",
+    "directory",
+    "navigation",
+    "electron",
+    "wsl",
+    "powershell"
+  ],
+  "author": "Jake",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^31.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.jake.cd-alias",
+    "productName": "cd-alias",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "icon": "icon/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "cd-alias"
+    },
+    "files": [
+      "src/**/*",
+      "icon/**/*"
+    ]
+  }
+}

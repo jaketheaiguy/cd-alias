@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>cd-alias Manager</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="renderer.js" defer></script>
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <div class="logo-area">
+        <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="url(#logo-grad)" />
+          <path d="M2 17L12 22L22 17" stroke="url(#logo-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M2 12L12 17L22 12" stroke="url(#logo-grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          <defs>
+            <linearGradient id="logo-grad" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#a855f7" />
+              <stop offset="1" stop-color="#3b82f6" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <h1>cd-alias</h1>
+      </div>
+      <div class="tabs">
+        <button class="tab-btn active" id="tab-windows" data-tab="windows">Windows</button>
+        <button class="tab-btn" id="tab-wsl" data-tab="wsl">WSL</button>
+      </div>
+    </header>
+
+    <main class="app-main">
+      <!-- PATH Management Section -->
+      <section class="path-section">
+        <div class="path-info">
+          <span class="status-label">CLI Integration:</span>
+          <span class="status-badge status-missing" id="path-status-badge">Not Installed</span>
+        </div>
+        <button class="btn btn-secondary" id="btn-path-action">Add to PATH</button>
+      </section>
+
+      <!-- Table Section -->
+      <section class="table-section">
+        <div class="table-container">
+          <table id="alias-table">
+            <thead>
+              <tr>
+                <th style="width: 180px;">Alias</th>
+                <th>Directory</th>
+                <th style="width: 70px; text-align: center;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="table-body">
+              <!-- Dynamically populated rows -->
+            </tbody>
+          </table>
+        </div>
+        <div class="table-actions">
+          <button class="btn btn-secondary" id="btn-add-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+            Add Row
+          </button>
+          <button class="btn btn-primary" id="btn-save">Save Changes</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Notification Modal / Overlay -->
+  <div class="modal-overlay" id="modal-container">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-title">Success</h3>
+        <button class="modal-close" id="btn-modal-close">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-message">
+        <!-- Message content goes here -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="btn-modal-ok">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- First Run / Welcome Dialog -->
+  <div class="modal-overlay" id="welcome-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Welcome to cd-alias</h3>
+      </div>
+      <div class="modal-body">
+        <p>Would you like to automatically configure the <code>cda</code> terminal command now? This will allow you to quickly jump directories directly from your command prompts.</p>
+        <div class="setup-checkboxes">
+          <label class="checkbox-container">
+            <input type="checkbox" id="setup-win-path" checked>
+            <span class="checkmark"></span>
+            Add to Windows PATH (CMD & PowerShell)
+          </label>
+          <label class="checkbox-container" id="setup-wsl-container">
+            <input type="checkbox" id="setup-wsl-path" checked>
+            <span class="checkmark"></span>
+            Add to WSL PATH (.bashrc)
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="btn-welcome-skip">Skip</button>
+        <button class="btn btn-primary" id="btn-welcome-setup">Configure Selected</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
